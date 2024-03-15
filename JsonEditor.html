@@ -1,0 +1,112 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      .jsonEditor {
+        padding: 4px;
+        border: 3px solid black;
+        white-space: pre;
+        font-family: 'Courier New', Courier, monospace;
+        min-width: 90%;
+        min-height: 13px;
+      }
+      .jsonEditorCorrect {
+        background-color: rgb(201, 228, 205);
+      }
+      .jsonEditorError {
+        background-color: rgb(248, 144, 144);
+      }
+      .footer {
+        width: 50%;
+        margin: 0 auto;
+        position: fixed;
+        bottom: 0;
+        border-top: 1px solid black;
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        background-color: grey;
+      }
+      .poetry {
+        padding: 4px;
+        margin: 5px;
+      }
+    </style>
+    <script>
+      function testJSON(text) {
+        try {
+          return !!JSON.parse(text);
+        } catch (error) {
+          return false;
+        }
+      }
+      function startEdit(elements, runOnCorrectJSON) {
+        for (let i = 0; i < elements.length; i++) {
+          if (!testJSON(elements[i].textContent)) {
+            elements[i].classList.add('jsonEditorError');
+          } else {
+            elements[i].classList.add('jsonEditorCorrect');
+            elements[i].textContent = JSON.stringify(JSON.parse(elements[i].textContent));
+          }
+
+          elements[i].addEventListener('focusin', (event) => {
+            if (!testJSON(elements[i].textContent)) {
+              elements[i].classList.add('jsonEditorError');
+              elements[i].classList.remove('jsonEditorCorrect');
+              return;
+            } else {
+              elements[i].classList.remove('jsonEditorError');
+              elements[i].classList.add('jsonEditorCorrect');
+            }
+            elements[i].oldJSON = elements[i].textContent;
+            elements[i].textContent = JSON.stringify(JSON.parse(elements[i].textContent), undefined, 2);
+          });
+          elements[i].addEventListener('focusout', (event) => {
+            if (!testJSON(elements[i].textContent)) {
+              elements[i].classList.add('jsonEditorError');
+              elements[i].classList.remove('jsonEditorCorrect');
+              return;
+            } else {
+              elements[i].classList.remove('jsonEditorError');
+              elements[i].classList.add('jsonEditorCorrect');
+            }
+            elements[i].textContent = JSON.stringify(JSON.parse(elements[i].textContent));
+            if (elements[i].oldJSON !== elements[i].textContent && typeof runOnCorrectJSON === 'function') {
+              runOnCorrectJSON(elements[i])
+              delete elements[i].oldJSON
+            };
+          });
+        }
+      }
+      function runOnSuccessfulJSON(element) {
+        console.log('New Correct JSON in element ' + element.id + '\nThe JSON is\n' + element.textContent);
+      }
+      document.addEventListener('DOMContentLoaded', (event) => {
+        startEdit(document.getElementsByClassName('jsonEditor'), runOnSuccessfulJSON);
+      });
+    </script>
+  </head>
+  <body>
+    <h2>Pretty small JSON editor for the web.</h2>
+    This is a simple JSON editor to simplify editing of JSON from webpages.<br>
+    50lines of vanilla javascript plus a whooping 14lines of css for the full example.<br>
+    After a div with the class "jsonEditor" is updated with correct JSON.<br>
+    A function in this example called runOnSuccessfulJSON, again look at the code.<br>
+    Check the code of this page example function runOnSuccessfulJSON to understand it better.<br>
+    And open the console to se what the function is doing.<br>
+    
+    <br>&nbsp;<br>
+    This is one pice of JSON click on it and se what happens, and what happens when you leave.<br>
+    <div id="first" class="jsonEditor" contenteditable="true">{ "string": "string", "emptyString": "", "array": [1,2,3], "emptyArray": [], "arryOfArrays": [[],[],[[],[]]], "object": {"first": 1, "second": 2}, "emptyObject": {}, "objectOfObject": {"a": {},"b":{},"c":{},"d":{"d1":{},"d2":{}}}, "booleanTrue": true, "booleanFalse": false, "null": null }</div>
+    This is another pice of JSON, click on it as well.<br>
+    <div id="second" class="jsonEditor" contenteditable="true">{"string": "string","emptyString": ""}</div>
+
+    <div class="footerouter">
+      <div class="footer">
+        <center>
+          <div>Project visited this amount of times <img src="https://www.free-website-hit-counter.com/c.php?d=9&id=164691&s=1" border="0" alt="Free Website Hit Counter" /></div>
+          <div>This Page was made by Andreas Grip and can be found at <a href="https://github.com/AndreasGrip/jsonbuilder">https://github.com/AndreasGrip/jsonbuilder</a></div>
+        </center>
+      </div>
+    </div>
+  </body>
+</html>
