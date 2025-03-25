@@ -7,4 +7,4 @@ And open the console to se what the function is doing.
 
 
 This project can be tested at
-https://jsoneditor.online/
+https://jsoneditor.griffintech.org/
